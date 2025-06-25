@@ -1,5 +1,7 @@
 package org.example;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
@@ -30,8 +32,12 @@ public class AnySetterTest {
                 .build();
         final String json = mapper.writeValueAsString(type);
         System.out.println(json);
-        final CollectionType serialized = mapper.readValue(json, CollectionType.class);
-        assertNotNull(serialized.getItems().get(0).getAttributes());
+        final CollectionType result = mapper.readValue(json, CollectionType.class);
+        Map<String, Object> resultMap = result.getItems().get(0).getAttributes();
+        assertNotNull(resultMap);
+        assertFalse(resultMap.isEmpty());
+        assertEquals("value", resultMap.get("key"));
+        assertEquals("value2", resultMap.get("key2"));
     }
 
     @JsonDeserialize(
