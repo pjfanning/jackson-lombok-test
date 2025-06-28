@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,20 +21,12 @@ public class AnySetterTest {
     @Test
     public void test() throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
-        final Map<String, Object> attributeMap = new HashMap<>();
-        attributeMap.put("key", "value");
-        attributeMap.put("key2", "value2");
-        final CollectionType type = CollectionType.builder().name("name")
-                .items(Collections.singletonList(
-                        Item.builder().type("type").attributes(attributeMap).build()))
-                .build();
-        final String json = mapper.writeValueAsString(type);
-        System.out.println(json);
+        final String json = a2q("{'name':'name','items':[{'type':'type','key1':'value1','key2':'value2'}]}");
         final CollectionType result = mapper.readValue(json, CollectionType.class);
         Map<String, Object> resultMap = result.getItems().get(0).getAttributes();
         assertNotNull(resultMap);
         assertFalse(resultMap.isEmpty());
-        assertEquals("value", resultMap.get("key"));
+        assertEquals("value1", resultMap.get("key1"));
         assertEquals("value2", resultMap.get("key2"));
     }
 
@@ -268,6 +258,13 @@ public class AnySetterTest {
             this.type = type;
             this.attributes = attributes;
         }
+    }
+
+    public static String a2q(final String s) {
+        if (s == null) {
+            return null;
+        }
+        return s.replace("'", "\"");
     }
 
 }
